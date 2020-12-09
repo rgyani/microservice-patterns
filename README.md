@@ -1,3 +1,4 @@
+
 ## Microservices vs Monoliths
 
 When we start a new application, the monolith architecture offers a lots of benefits being simple to develop, test and deploy.
@@ -90,9 +91,9 @@ If a local transaction fails because it violates a business rule, then the saga 
 
 ![img](imgs/saga.svg)
 
-There are two ways of coordination sagas:
-Choreography - each local transaction publishes domain events that trigger local transactions in other services
-Orchestration - an orchestrator tells the participants what local transactions to execute
+There are two ways of coordination sagas:<br>
+**Choreography** - each local transaction publishes domain events that trigger local transactions in other services<br>
+**Orchestration** - an orchestrator tells the participants what local transactions to execute<br>
 
 ###### Choreography Saga
 ![img](imgs/choreography.svg)
@@ -105,23 +106,23 @@ For reliably publishing events and updating data we can use
 2. Transaction Outbox
 3. Transaction Log Tailing
 
-#####Event Sourcing
-Event sourcing persists the state of a business entity such an Order or a Customer as a sequence of state-changing events. 
-Whenever the state of a business entity changes, a new event is appended to the list of events.
-Since saving an event is a single operation, it is inherently atomic. 
-The application reconstructs an entity’s current state by replaying the events.
+##### Event Sourcing
+Event sourcing persists the state of a business entity such an Order or a Customer as a sequence of state-changing events.<br> 
+Whenever the state of a business entity changes, a new event is appended to the list of events.<br>
+Since saving an event is a single operation, it is inherently atomic. <br>
+The application reconstructs an entity’s current state by replaying the events.<br>
 
-Event sourcing makes it possible to reliably publish events whenever state changes.
-Because it persists events rather than domain objects, it mostly avoids the object‑relational impedance mismatch problem.
+Event sourcing makes it possible to reliably publish events whenever state changes.<br>
+Because it persists events rather than domain objects, it mostly avoids the object‑relational impedance mismatch problem.<br>
 It provides a 100% reliable audit log of the changes made to a business entity by making it possible to implement temporal queries that determine the state of an entity at any point in time.
 
 However, now the query becomes a little more complex, with applications using CQRS for implementation queries.
 
 
 ##### Transaction Outbox
-A service that uses a relational database inserts messages/events into an outbox table (e.g. MESSAGE) as part of the local transaction. 
-A service that uses a NoSQL database appends the messages/events to attribute of the record (e.g. document or item) being updated. 
-A separate **Polling publisher** publishes the events inserted into database to a message broker.
+A service that uses a relational database inserts messages/events into an outbox table (e.g. MESSAGE) as part of the local transaction.<br> 
+A service that uses a NoSQL database appends the messages/events to attribute of the record (e.g. document or item) being updated. <br>
+A separate **Polling publisher** publishes the events inserted into database to a message broker.<br>
 
 Instead of service publishing messages to the Outbox, we can instead implement **Transaction log tailing** to tail the database transaction log
 
@@ -133,37 +134,41 @@ For this we generally use lightweight protocols like REST or gRPC
 
 ##### REST API
 REST stands for **REpresentational State Transfer**. 
-It means when a RESTful API is called, the server will transfer to the client a representation of the state of the requested resource. 
+It means when a RESTful API is called, the server will transfer to the client a representation of the state of the requested resource. <br>
 For example, when a developer calls Instagram API to fetch a specific user (the resource), the API will return the state of that user, including their name, the number of posts that user posted on Instagram so far, how many followers they have, and more. 
-The representation of the state can be in a JSON format, or even XML or HTML format.
+The representation of the state can be in a JSON format, or even XML or HTML format.<br>
 _URL only decides the location. Headers (Accept and Content-Type, etc.) decide the representation. HTTP methods (GET/POST/PUT/DELETE) decide the state transfer._
 
 
-SOAP stands for "Simple Object Access Protocol,". Each SOAP message is contained in an "envelope" that includes a header and a body. The header may include the message ID and date the message was sent, while the body contains the actual message. It is based on XML. SOAP defines an envelope format and various rules for describing its contents. SOAP, WSDL and UDDI as one of the three foundation standards of web services.
+SOAP stands for **Simple Object Access Protocol**.<br> 
+Each SOAP message is contained in an ***envelope*** that includes a header and a body.<br> 
+The header may include the message ID and date the message was sent, while the body contains the actual message.<br>
+It is based on XML.<br> 
+SOAP defines an envelope format and various rules for describing its contents. SOAP, WSDL and UDDI as one of the three foundation standards of web services.
 
-REST is the way HTTP should be used.
-Today we only use a tiny bit of the HTTP protocol's methods – namely GET and POST. The REST way to do it is to use all of the protocol's methods.
+REST is the way HTTP should be used.<br>
+Today we only use a tiny bit of the HTTP protocol's methods – namely GET and POST. The REST way to do it is to use all of the protocol's methods.<br>
 For example, REST dictates the usage of DELETE to erase a document (be it a file, state, etc.) behind a URI, whereas, with HTTP, you would misuse a GET or POST query like ...product/?delete_id=22.
 
-The main difference between SOAP and REST is the degree of coupling between client and server implementations. 
+The main difference between SOAP and REST is the degree of coupling between client and server implementations. <br>
 * A SOAP client works like a custom desktop application, tightly coupled to the server. There's a rigid contract between the client and the server, and everything is expected to break if either side changes anything. You need constant updates following any change, but it's easier to ascertain if the contract is being followed.
-A REST client is more like a browser. It's a generic client that knows how to use a protocol and standardized methods, and an application has to fit inside that. You don't violate the protocol standards by creating extra methods, you leverage on the standard methods and create the actions with them on your media type. If done right, there's less coupling, and changes can be dealt with more gracefully.
-
+* A REST client is more like a browser. It's a generic client that knows how to use a protocol and standardized methods, and an application has to fit inside that. You don't violate the protocol standards by creating extra methods, you leverage on the standard methods and create the actions with them on your media type. If done right, there's less coupling, and changes can be dealt with more gracefully.
 * A client is supposed to enter a REST service with zero knowledge of the API, except for the entry point and the media type. 
-In SOAP, the client needs previous knowledge of everything it will be using, or it won't even begin the interaction. Additionally, a REST client can be extended by code-on-demand supplied by the server itself, the classical example being JavaScript code used to drive the interaction with another service on the client-side.
+* In SOAP, the client needs previous knowledge of everything it will be using, or it won't even begin the interaction. Additionally, a REST client can be extended by code-on-demand supplied by the server itself, the classical example being JavaScript code used to drive the interaction with another service on the client-side.
+
 
 ##### gRPC
-gRPC is a binary message-based protocol, and this means you’re forced to take an API-first approach to service design. 
-You define your gRPC APIs using a Protocol Buffers based IDL, which is Google’s language-neutral mechanism for serializing structured data. 
-You use the Protocol Buffer compiler to generate client-side stubs and server-side skeletons. 
-Clients and servers exchange binary messages in the Protocol Buffers format using HTTP/2.
-A gRPC API consists of one or more services and request/response message definitions. 
-A service definition is analogous to a Java interface and is a collection of strongly typed methods. 
-As well as supporting simple request/response RPC, gRPC support streaming RPC. 
-A server can reply with a stream of messages to the client. Alternatively, a client can send a stream of messages to the server.
+gRPC is a binary message-based protocol, and this means you’re forced to take an API-first approach to service design.<br> 
+You define your gRPC APIs using a Protocol Buffers based IDL, which is Google’s language-neutral mechanism for serializing structured data.<br> 
+You use the Protocol Buffer compiler to generate client-side stubs and server-side skeletons. <br>
+Clients and servers exchange binary messages in the Protocol Buffers format using HTTP/2.<br>
+A gRPC API consists of one or more services and request/response message definitions. <br>
+A service definition is analogous to a Java interface and is a collection of strongly typed methods.<br> 
+
 
 
 #### 3. How do we implement queries spanning data owned by multiple services.
+
 Since each microservices owns its own database, for implementing queries that need to retrieve data owned by multiple services, we use
 * API Composition
 * Command Query Responsibility Segregration (CQRS) pattern
@@ -171,18 +176,20 @@ Since each microservices owns its own database, for implementing queries that ne
 * Service Mesh
 
 ##### API Composition
+
 API Composition implements a query operation by invoking services that own the data and combining the results
 ![img](imgs/api-composition.svg)
 
 
 ##### Command Query Responsibility Segregration (CQRS) pattern
-With CQRS, we define a view database, which is a **read-only replica** for supporting the queries.
+With CQRS, we define a view database, which is a **read-only replica** for supporting the queries.<br>
 The application keeps this database updated with subscribing to Domain events published by the services which own the data.
 
 The pattern while being complex, and supporting only **eventual consistency**, does have its benefits including
 * Supports multiple denormalized views which are scalable and performant
 * Improved separation of concern, leading to simpler command and query models
 
+![img](imgs/cqrs.svg)
 
 
 ##### API Gateway
@@ -191,7 +198,7 @@ With each microservice, exposing their own endpoints via REST API, we could pote
 * Various services might use a diverse set of protocols
 * The backend services could change over time, and the client should to be agnostic to those changes.
   
-The solution is to implement an API gateway which is the single entry point for all clients. 
+The solution is to implement an API gateway which is the single entry point for all clients. <br>
 The API gateway could, in turn, simply proxy the requests to the appropriate services, or fan-out the requests to various services, aggregate the response and return the appropriate result.
 
 While this can lead to increased complexity and response time due to additional network hop, the advantages include
@@ -206,61 +213,62 @@ __API Gateway should be deployed in its own instance, separate from the client a
 The APIs exposed by the API gateway are most likely running over HTTP Protocol (like REST, GraphQL, gRPC, SOAP etc) and the traffic can be both north-south (outside the datacenter) or east-west( inside the datacenter)
 
 ##### Service Mesh
-Consider an alternative approach, where we want to build a service-to-service communication between two or more services. 
-We would have to implement and re-implement traffic policies like security, observability and error handling in each of our services in possibly different programming languages. 
-This can lead to fragmentation, and more management apart from the obvious security risks.
-What If we could outsource the network management of any request to a proxy living outside, (but alongside) our service. 
-This proxy is by default portable and implements features like mutual TLS encryption, identity, routing, logging, tracing, load-balancing. 
+Consider an alternative approach, where we want to build a service-to-service communication between two or more services.<br> 
+We would have to implement and re-implement traffic policies like security, observability and error handling in each of our services in possibly different programming languages.<br> 
+This can lead to fragmentation, and more management apart from the obvious security risks.<br>
+What If we could outsource the network management of any request to a proxy living outside, (but alongside) our service.<br> 
+This proxy is by default portable and implements features like mutual TLS encryption, identity, routing, logging, tracing, load-balancing.<br> 
 This layer can document how well (or not) different parts of an app interact, so it becomes easier to optimize communication and avoid downtime as an app grows.
 
 ![img](imgs/service-mesh-1680.png)
 
 
-It is commonly mis-understood that API gateways are used for north-south traffic, while Service Meshes are for east-west traffic. 
+It is commonly mis-understood that API gateways are used for north-south traffic, while Service Meshes are for east-west traffic. <br>
 A better definition would be that API gateways are generally more focussed on L7 traffic policies, while Service mesh support both L4/L7 traffic policies.
 
-Another major difference between the two patterns is the deployment model.
-In a service mesh pattern, we must deploy a proxy data plane alongside each replica of each service. 
+Another major difference between the two patterns is the deployment model.<br>
+In a service mesh pattern, we must deploy a proxy data plane alongside each replica of each service.<br> 
 This can obviously be met with resistance. 
 Also, there might be legacy product boundaries or third party services, which don't allow access control from outside the service.
 
+
 ##### Service Discovery
-A modern microservice-based application typically runs in a virtualized or containerized environments where the number of instances of a service and their locations changes dynamically.
-Services typically need to call one another, and can use a **Service Registry** to determine the location of a service instance to which to send requests.
+A modern microservice-based application typically runs in a virtualized or containerized environments where the number of instances of a service and their locations changes dynamically.<br>
+Services typically need to call one another, and can use a **Service Registry** to determine the location of a service instance to which to send requests.<br>
 
-A Service registry, is a database of services, their instances and their locations. 
-Service instances are registered with the service registry on startup and deregistered on shutdown. 
-Client of the service and/or routers query the service registry to find the available instances of a service. 
-A service registry might invoke a service instance’s health check API to verify that it is able to handle requests
+A Service registry, is a database of services, their instances and their locations. <br>
+Service instances are registered with the service registry on startup and deregistered on shutdown.<br> 
+Client of the service and/or routers query the service registry to find the available instances of a service.<br> 
+A service registry might invoke a service instance’s health check API to verify that it is able to handle requests.<br>
 
-However now this Service Registry become a critical system component, which much be managed (unless built-into the infrastructure) 
-Although clients should cache data provided by the service registry, if the service registry fails that data will eventually become out of date. 
-* Consequently, the service registry must be highly available.
-* The clients of the service registry need to know the location(s) of the service registry instances. 
-  Service registry instances must be deployed on fixed and well known IP addresses. Clients are configured with those IP addresses.
+However now this Service Registry become a critical system component, which much be managed (unless built-into the infrastructure) <br>
+Although clients should cache data provided by the service registry, if the service registry fails that data will eventually become out of date.<br> 
+* Consequently, the service registry must be highly available.<br>
+* The clients of the service registry need to know the location(s) of the service registry instances.<br> 
+  Service registry instances must be deployed on fixed and well known IP addresses. Clients are configured with those IP addresses.<br>
 
 
 
 
 
 #### 4. How to handle authentication between services
-It has been confusing to differentiate between authentication and authorization. In fact, it is very simple.
-**Authentication**: Refers to verify **who you are**, so you need to use username and password for authentication.
-**Authorization**: Refers to **what you can do**, for example access, edit or delete permissions to some documents, and this happens after verification passes.
+It has been confusing to differentiate between authentication and authorization. In fact, it is very simple.<br>
+**Authentication**: Refers to verify **who you are**, so you need to use username and password for authentication.<br>
+**Authorization**: Refers to **what you can do**, for example access, edit or delete permissions to some documents, and this happens after verification passes.<br>
 
-In a monolith, we can have a **Security Module** which authenticates the identity of the user. Once logged in, a session is created for the user. 
-The server returns a sessionId to the user, which is passed with each subsequent request. 
+In a monolith, we can have a **Security Module** which authenticates the identity of the user. Once logged in, a session is created for the user. <br>
+The server returns a sessionId to the user, which is passed with each subsequent request. <br>
 The application can then use the Session Id to verify the user’s identity, without having to enter a user name and password for authentication each time.
 
 With the above approach in a monolith, we face the following problems
 * Authentication and authorization logic needs to be handled in each microservice.
 * It breaks the principle of single responsibility
 
-So, we replace the above SessionID(and its corresponding Session Store), with Client Tokens which are held by the user themselves and are typically stored in the browser in the form of cookies. 
+So, we replace the above SessionID(and its corresponding Session Store), with Client Tokens which are held by the user themselves and are typically stored in the browser in the form of cookies. <br>
 The Token holds the user’s identity information, and each time the request is sent to the server, the server can therefore determine the identity of the visitor and determine whether it has access to the requested resource.
 
-The Token is used to indicate the user’s identity. 
-Therefore, the content of the Token needs to be encrypted to avoid falsification by the requester or the third party. 
+The Token is used to indicate the user’s identity. <br>
+Therefore, the content of the Token needs to be encrypted to avoid falsification by the requester or the third party.<br> 
 **JWT (Json Web Token)** is an open standard (RFC 7519) that defines the Token format, defines the Token content, encrypts it, and provides lib for various languages.
 
 ![img](imgs/jwt.png)
@@ -269,21 +277,21 @@ With JWT, the microservice has to perform two steps mainly
 1. **Generating the JSON Web Token** This is the authentication part, where in the user is validated, and the payload is added with user id, expiration date etc and also user roles and user-defined information.
 2. **Validating the token for received requests** This is the authorization part, where the Base64 JWT token is decrypted, expiry checked, and the request is not processed based on the user id and roles in the token
 
-We can also leverage **Single Sign-on** instead of JWT, where in the user authenticated with a third-party SSO server, and passes in the token to our service.
-The service in turn validates the token with the SSO server before granting access.
+We can also leverage **Single Sign-on** instead of JWT, where in the user authenticated with a third-party SSO server, and passes in the token to our service.<br>
+The service in turn validates the token with the SSO server before granting access.<br>
 Needless to say, this results in a lot of trivial network traffic, repeated work, and it may cause single point of failure.
 
 ![img](imgs/sso.png)
 
 
 #### 5. How to handle downstream errors in microservices 
-Services sometimes collaborate when handling requests. 
-When one service synchronously invokes another there is always the possibility that the other service is unavailable or is exhibiting such high latency it is essentially unusable. 
-Precious resources such as threads might be consumed in the caller while waiting for the other service to respond. 
-This might lead to resource exhaustion, which would make the calling service unable to handle other requests. 
-The failure of one service can potentially cascade to other services throughout the application.
+Services sometimes collaborate when handling requests. <br>
+When one service synchronously invokes another there is always the possibility that the other service is unavailable or is exhibiting such high latency it is essentially unusable.<br> 
+Precious resources such as threads might be consumed in the caller while waiting for the other service to respond. <br>
+This might lead to resource exhaustion, which would make the calling service unable to handle other requests. <br>
+The failure of one service can potentially cascade to other services throughout the application.<br>
 
-A solution to this potentially cascading problem is to use Circuit Breaker  
+A solution to this potentially cascading problem is to use Circuit Breaker  <br>
 
 ##### Circuit Breaker Pattern
 A service client should invoke a remote service via a proxy which monitors the number of consecutive failures for a threshold, and like an electric circuit-breaker trips, and for the duration of a timeout period all attempts to invoke the remote service will fail immediately. 
