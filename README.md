@@ -163,6 +163,48 @@ Clients and servers exchange binary messages in the Protocol Buffers format usin
 A gRPC API consists of one or more services and request/response message definitions.   
 A service definition is analogous to a Java interface and is a collection of strongly typed methods.   
 
+##### GraphQL
+
+GraphQL is a much newer solution than the ones presented before.   
+
+Have you ever had a problem in REST where you needed to implement two separate endpoints returning more simple and more complex responses? If yes then GraphQL is a solution to that.  
+
+From a technical perspective usually it’s a single REST endpoint /graphql taking on input JSON requests with special query DSL. For every query you need to specify, which fields from requested entities should be included in the response.
+
+**Pros:**
+* During query it is possible to define which fields should be returned in the response.This allows to query only for data needed for specific view/service.
+* Strong typing, resources have predefined schemas
+* Supported by many languages
+* More and more popular
+
+**Cons:**
+* First initial release was in 2015 and a stable one in June 2018, so it’s quite fresh.
+* Not all client libraries are already mature
+* No HTTP caching support
+* Queries always return status code 200
+
+**Example:**
+```
+type Stock {
+  name: String,
+  price: String
+}
+
+Query:
+{
+  stock(name: "GOOG") {
+    price
+  }
+}
+
+Response:
+{
+  "stock": {
+    "price": "23.50"
+  }
+}
+```
+This means we’re fetching entity stocks by name GOOG and the response should include the field price .
 
 
 #### 3. How do we implement queries spanning data owned by multiple services.
