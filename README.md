@@ -17,7 +17,7 @@ Indeed, microservices offer tangible benefits like scalability, flexibility, agi
 >In short, the microservice architectural style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API.
 > -Martin Fowler
 
-The book "The Art of Scalability" describes a really useful, three dimension scalability model: the scale cube.
+The book ["The Art of Scalability"](http://theartofscalability.com/) describes a really useful, three dimension scalability model: the scale cube.
 
 ![img](imgs/scalecube.svg)
 
@@ -42,14 +42,12 @@ Each service has its own database in order to be decoupled from other services.
 At a very high level, SOA and the microservice architecture are architectural styles that structure a system as a set of services
 However, there are significant differences between them
 
-1. Inter-service Communication
-  * SOA uses Smart Pipes such as Enterprise Service Bus, SOAP and other WS* standards
-  * Microservices use Dumb pipes, such as message brokers, or direct service to service communication using REST or gRPC
-2. Data
-  * SOA uses a Global data model and shared databases
-  * Microservices generally use database per service
-    
-Traditionally, SOA involves an enterprise service bus (ESB) as a means of coordinating and controlling these services.
+|   | Microservices | SOA |
+|---|---|---|
+|Inter-service Communication | Microservices use Dumb pipes, such as message brokers, or direct service to service communication using REST or gRPC | SOA uses Smart Pipes such as Enterprise Service Bus, SOAP and other WS* standards |
+| Data | Microservices generally use database per service | SOA uses a Global data model and shared databases |
+ 
+Traditionally, SOA involves an **enterprise service bus (ESB)** as a means of coordinating and controlling these services.
 Microservice architecture is generally considered an evolution of SOA as its services are more fine-grained, and function independently of each other. 
 
 
@@ -82,7 +80,7 @@ Ideally each service should have a small set of responsibilities. When selecting
  * Decompose by **domain driven design**, by dividing the domain into subdomains like Order Taking Subdomain, Delivery subdomain, Accounting subdomain 
 
 #### 2. How do we maintain data consistency between services
-Since our services are loosely coupled, each service could have its own database. How do we now maintain data consistency between the services.
+Since our services are loosely coupled, each service could have its own database. How do we now maintain data consistency between the services.  
 Here we can use the SAGA pattern, where-in, a service publishes an event when its data changes, while downstream services listen for this event and update their data.
 
 ##### SAGA Pattern
@@ -116,7 +114,7 @@ Event sourcing makes it possible to reliably publish events whenever state chang
 Because it persists events rather than domain objects, it mostly avoids the object‑relational impedance mismatch problem.  
 It provides a 100% reliable audit log of the changes made to a business entity by making it possible to implement temporal queries that determine the state of an entity at any point in time.
 
-However, now the query becomes a little more complex, with applications using CQRS for implementation queries.
+However, now the query becomes a little more complex, with applications using CQRS (a read only replica of the data) (discussed later) for implementation queries.
 
 
 ##### Transaction Outbox
@@ -279,7 +277,7 @@ With JWT, the microservice has to perform two steps mainly
 
 We can also leverage **Single Sign-on** instead of JWT, where in the user authenticated with a third-party SSO server, and passes in the token to our service.  
 The service in turn validates the token with the SSO server before granting access.  
-Needless to say, this results in a lot of trivial network traffic, repeated work, and it may cause single point of failure.
+Needless to say, **this results in a lot of trivial network traffic, repeated work, and it may cause single point of failure**.
 
 ![img](imgs/sso.png)
 
