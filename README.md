@@ -97,7 +97,7 @@ There are two ways of coordination sagas:
 ![img](imgs/choreography.svg)
 
 ###### Orchestration Saga
-![img](imgs/orchestration.svg)
+![img](imgs/orchestration.drawio.png)
 
 For reliably publishing events and updating data we can use
 1. Event Sourcing
