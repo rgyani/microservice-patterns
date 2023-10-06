@@ -99,6 +99,18 @@ There are two ways of coordination sagas:
 ###### Orchestration Saga
 ![img](imgs/orchestration.drawio.png)
 
+| Choreography | Orchestration |
+|---|---|
+| Good for simple workflows | Used for complex workflows with many participants or new participants get added over time| 
+| Risk of cyclic dependency | No risk of cyclic dependency, however orchestrator becomes Single Point of Failure |
+| Difficult to do Integration testing | Design complexity |
+
+SAGA implementation must be capable of handling a set of potential transient failures, and provide idempotence for reducing side-effects and ensuring data consistency.  
+Idempotence means that the same operation can be repeated multiple times without changing the initial result. 
+
+
+
+
 For reliably publishing events and updating data we can use
 1. Event Sourcing
 2. Transaction Outbox
