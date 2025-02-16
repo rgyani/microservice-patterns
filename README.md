@@ -307,7 +307,7 @@ Although clients should cache data provided by the service registry, if the serv
 * The clients of the service registry need to know the location(s) of the service registry instances.   
   Service registry instances must be deployed on fixed and well known IP addresses. Clients are configured with those IP addresses.  
 
-
+Examples include Eureka, Consul
 
 
 
